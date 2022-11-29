@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>paino</title>
+  <style>
+    html {
+      font-size: calc(100vw / 750);
+      background-color: #efefef;
+    }
+
+    div {
+      box-sizing: border-box;
+      transition: all .1s;
+    }
+
+
+    .space {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5vh;
+      background: #fff;
+      z-index: 100;
+      border: .5rem solid #ccc;
+
+    }
+
+
+    .keys {
+      display: flex;
+      position: fixed;
+      top: 5vh;
+      height: 90vh;
+      left: 50%;
+      transform: translate(-50%, 0%);
+
+    }
+
+
+
+    .black-keys {
+      position: absolute;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      height: 49.44%;
+    }
+
+    .white,
+    .black {
+
+      border-radius: 0 0 6rem 6rem;
+
+      transform-origin: 0 0;
+
+
+    }
+
+    .white {
+      width: 80rem;
+      height: 80%;
+      background-color: #fff;
+      border: .5rem solid #ccc;
+
+    }
+
+    .black {
+      width: 60rem;
+
+      background-color: #000;
+      margin: 0 10rem;
+
+    }
+
+    .black:nth-of-type(3) {
+      height: 0;
+    }
+
+    .active {
+
+      transform: rotateX(15deg);
+    }
+
+    .index {
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      display: flex;
+      justify-content: space-between;
+
+
+    }
+
+    .index>div {
+      flex: 1 1 auto;
+      border: .5rem solid #ccc;
+      transform-origin: bottom;
+      height: 5vh;
+      /* margin: 0 0.5rem; */
+    }
+
+    .action {
+      transform: scaleY(61.8%);
+    }
+
+    .index>div:nth-of-type(1) {
+      background: #bbb;
+    }
+
+    .index>div:nth-of-type(2) {
+      background: #aaa;
+    }
+
+    .index>div:nth-of-type(3) {
+      background: #999;
+    }
+
+    .index>div:nth-of-type(4) {
+      background: #888;
+    }
+
+    .index>div:nth-of-type(5) {
+      background: #777;
+    }
+
+    .index>div:nth-of-type(6) {
+      background: #666;
+    }
+
+    .index>div:nth-of-type(7) {
+      background: #555;
+    }
+
+    .index>div:nth-of-type(8) {
+      background: #444;
+    }
+
+    .index>div:nth-of-type(9) {
+      background: #333;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="space"></div>
+
+
+  <div class="keys">
+
+    <div class="white"></div>
+    <div class="white"></div>
+    <div class="white"></div>
+    <div class="white"></div>
+    <div class="white"></div>
+    <div class="white"></div>
+    <div class="white"></div>
+
+    <div class="black-keys">
+      <div class="black"></div>
+      <div class="black"></div>
+      <div class="black"></div>
+      <div class="black"></div>
+      <div class="black"></div>
+      <div class="black"></div>
+    </div>
+  </div>
+
+  <div class="index">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div class="action"></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+
+
+  <script>
+
+    let blacks = document.querySelectorAll(".black");
+    let whites = document.querySelectorAll(".white");
+    let indexs = document.querySelector(".index").children;
+
+
+
+    // 奏乐
+    Audio.prototype.start = function () {
+      this.status = "start";
+      clearInterval(this.timer);
+      this.currentTime = 0;
+      this.volume = 1;
+      this.play();
+
+    }
+    // 结束奏乐
+    Audio.prototype.end = function () {
+
+      this.status = "end";
+      clearInterval(this.timer);
+      // 音乐渐隐
+      this.timer = setInterval(() => {
+        let volume = this.volume - 0.1;
+        if (volume < 0) {
+          this.volume = 0;
+          clearInterval(this.timer);
+        } else {
+          this.volume = volume;
+        }
+      }, 50);
+
+    }
+
+    Audio.prototype.keyActive = function () {
+      clearInterval(this.timer);
+      let [xxx, type, key] = this.getAttribute("src").match(/(#?)(\w)\d.wav/);
+      key = scale[key] - 1;
+      if (type === "#") {
+        blacks[key].classList.toggle("active");
+      } else {
+        whites[key].classList.toggle("active");
+      }
+
+    }
+
+    // 高低音索引
+    let index = 5;
+    // 黑键还是白键
+    let color = "white";
+    // 数字与键名映射
+    let scale = {
+
+      "1": "C",
+      "2": "D",
+      "3": "E",
+      "4": "F",
+      "5": "G",
+      "6": "A",
+      "7": "B",
+
+
+      "C": 1,
+      "D": 2,
+      "E": 3,
+      "F": 4,
+      "G": 5,
+      "A": 6,
+      "B": 7,
+
+    };
+
+    // 本地音频
+    let sound = {
+      "C8": new Audio("./sound/C/C8.MP3")
+    }
+    // 初始化音频
+    for (let i = 0; i <= 7; i++) {
+      for (let j = 1; j <= 7; j++) {
+        if (i === 0 && ![6, 7].includes(j)) continue;
+        if ([1, 2, 4, 5, 6].includes(j)) {
+          sound[`#${scale[j]}${i}`] = new Audio(`./sound/#${scale[j]}/#${scale[j]}${i}.MP3`);
+        }
+        sound[`${scale[j]}${i}`] = new Audio(`./sound/${scale[j]}/${scale[j]}${i}.MP3`);
+      }
+    }
+
+    // 琴键按下
+    window.addEventListener("keydown", (event) => {
+      let { key, code } = event;
+      // 空格控制黑白键
+      if (code === "Space" || code === "Numpad0") {
+        color = "black";
+        document.querySelector(".space").style.background = "#000";
+        clearActions();
+        return;
+      }
+      // 顶部数字键控制高低音
+      if (/Digit\d/.test(code)) {
+        // 停止正在奏乐的音频（切换后无法控制“键起”事件，所以切换前先停止所有音频）
+        for (let audio of Object.values(sound)) {
+          if (audio.status === "start") {
+            audio.end();
+          }
+        }
+        // 改变高低音索引
+        index = key;
+
+
+        for (let i = 0; i < indexs.length; i++) {
+          if (index == i + 1) {
+            indexs[i].classList.add("action");
+          } else {
+            indexs[i].classList.remove("action");
+          }
+        }
+
+        return;
+      }
+      // 排除其他按键
+      if (!/Numpad\d/.test(code)) return;
+
+      // 奏乐
+      let audio = sound[`${color === "white" ? "" : "#"}${scale[key]}${index-1}`];
+      if (!audio || audio.status === "start") return;
+      if (color === "white") {
+        whites[key - 1].classList.add("active");
+      } else {
+        blacks[key - 1].classList.add("active");
+      }
+      audio.start();
+
+
+
+    });
+
+    // 琴键抬起
+    window.addEventListener("keyup", (event) => {
+      let { key, code } = event;
+      // 空格控制黑白键
+      if (code === "Space" || code === "Numpad0") {
+        document.querySelector(".space").style.background = "#fff";
+        color = "white";
+
+        clearActions();
+        return;
+      }
+
+      // 排除其他按键
+      if (!/Numpad\d/.test(code)) return;
+
+      // 停止奏乐
+
+
+
+      if (color === "white") {
+        whites[key - 1].classList.remove("active");
+      } else {
+        blacks[key - 1].classList.remove("active");
+      }
+
+      let audio = sound[`${color === "white" ? "" : "#"}${scale[key]}${index-1}`];
+      if (!audio) return;
+      audio.end();
+
+
+    });
+
+
+    function clearActions() {
+      let actives = document.querySelectorAll(".active");
+      for (let i = 0; i < actives.length; i++) {
+        actives[0].classList.remove("active");
+      }
+    }
+
+
+
+
+  </script>
+
+</body>
+
+</html>
