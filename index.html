@@ -9,15 +9,11 @@
   <style>
     html {
 
-      font-size: calc(100vw / 7.5);
+      font-size: calc(100vmin / 7.5);
       background-color: #efefef;
     }
 
-    @media (min-width: 768px) {
-      html {
-        font-size: 100px;
-      }
-    }
+
 
     div {
       box-sizing: border-box;
@@ -49,13 +45,17 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: .32rem;
+      font-size: .24rem;
       padding: 0 .16rem;
     }
 
     .space.active {
       background-color: #000;
       color: white;
+    }
+    .space .i-help, .space .i-tip {
+      width: .24rem;
+      height: .24rem;
     }
 
 
@@ -90,7 +90,7 @@
       display: flex;
       justify-content: center;
       align-items: flex-end;
-      line-height: 500%;
+      padding-bottom: .32rem;
     }
 
 
@@ -99,7 +99,7 @@
       width: 12vw;
       height: 80%;
       background-color: #fff;
-      border: 1px solid #ccc;
+      border: .01rem solid #ccc;
 
     }
 
@@ -139,7 +139,7 @@
       justify-content: center;
       align-items: center;
       color: white;
-      font-size: .28rem;
+      font-size: .18rem;
 
       /* margin: 0 0.5rem; */
     }
