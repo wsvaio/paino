@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>电子琴</title>
+  <style>
+    html {
+      font-size: calc(100vw / 750);
+      background-color: #efefef;
+    }
+
+    div {
+      box-sizing: border-box;
+      transition: all .1s;
+    }
+
+
+    .space {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5vh;
+      background: #fff;
+      z-index: 100;
+      border: .5rem solid #ccc;
+
+    }
+
+
+    .keys {
+      display: flex;
+      position: fixed;
+      top: 5vh;
+      height: 90vh;
+      left: 50%;
+      transform: translate(-50%, 0%);
+
+    }
+
+
+
+    .black-keys {
+      position: absolute;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      height: 49.44%;
+    }
+
+    .white,
+    .black {
+
+      border-radius: 0 0 6rem 6rem;
+
+      transform-origin: 0 0;
+
+
+    }
+
+    .white {
+      width: 80rem;
+      height: 80%;
+      background-color: #fff;
+      border: .5rem solid #ccc;
+
+    }
+
+    .black {
+      width: 60rem;
+
+      background-color: #000;
+      margin: 0 10rem;
+
+    }
+
+    .black:nth-of-type(3) {
+      height: 0;
+    }
+
+    .white.active,
+    .black.active {
+
+      transform: rotateX(15deg);
+    }
+
+    .index {
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      display: flex;
+      justify-content: space-between;
+
+
+    }
+
+    .index>div {
+      flex: 1 1 auto;
+      border: .5rem solid #ccc;
+      transform-origin: bottom;
+      height: 5vh;
+      /* margin: 0 0.5rem; */
+    }
+
+    .index>div.active {
+      transform: scaleY(61.8%);
+    }
+
+    .index>div:nth-of-type(1) {
+      background: #bbb;
+    }
+
+    .index>div:nth-of-type(2) {
+      background: #aaa;
+    }
+
+    .index>div:nth-of-type(3) {
+      background: #999;
+    }
+
+    .index>div:nth-of-type(4) {
+      background: #888;
+    }
+
+    .index>div:nth-of-type(5) {
+      background: #777;
+    }
+
+    .index>div:nth-of-type(6) {
+      background: #666;
+    }
+
+    .index>div:nth-of-type(7) {
+      background: #555;
+    }
+
+    .index>div:nth-of-type(8) {
+      background: #444;
+    }
+
+    .index>div:nth-of-type(9) {
+      background: #333;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="space"></div>
+
+
+  <div class="keys">
+
+    <div class="white"></div>
+    <div class="white"></div>
+    <div class="white"></div>
+    <div class="white"></div>
+    <div class="white"></div>
+    <div class="white"></div>
+    <div class="white"></div>
+
+    <div class="black-keys">
+      <div class="black"></div>
+      <div class="black"></div>
+      <div class="black"></div>
+      <div class="black"></div>
+      <div class="black"></div>
+      <div class="black"></div>
+    </div>
+  </div>
+
+  <div class="index">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div class="active"></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+
+
+  <script>
+
+    const blacks = document.querySelectorAll(".black");
+    const whites = document.querySelectorAll(".white");
+    const indexs = document.querySelector(".index").children;
+
+
+    const audioMap = new Map();
+    audioMap.set("A1", new Audio("./sound/A/A0.MP3"));
+    audioMap.set("#A1", new Audio("./sound/%23A/%23A0.MP3"));
+    audioMap.set("B1", new Audio("./sound/B/B0.MP3"));
+    audioMap.set("C9", new Audio("./sound/C/C8.MP3"));
+    for (const key of ["A", "B", "C", "D", "E", "F", "G"]) {
+      for (const i of [1, 2, 3, 4, 5, 6, 7]) {
+        audioMap.set(`${key}${i + 1}`, new Audio(`./sound/${key}/${key}${i}.MP3`));
+        if (["A", "C", "D", "F", "G"].includes(key)) {
+          // %23 = #
+          audioMap.set(`#${key}${i + 1}`, new Audio(`./sound/%23${key}/%23${key}${i}.MP3`));
+        }
+      }
+    }
+
+    // 键盘按下时奏乐，键盘键起时音乐渐隐
+    const sound = (num, type = "keydown") => {
+      let key = [, "C", "D", "E", "F", "G", "A", "B"][num];
+      if (!key) return;
+      key = `${keySet.has("Space") ? '#' : ''}${key}${index}`;
+      const audio = audioMap.get(key);
+      if (!audio) return;
+      if (type == "keydown") {
+        audio.play();
+      } else if (type == "keyup") {
+        audioMap.set(key, new Audio(audio.src));
+        fadeSound(audio);
+      }
+      const item = keySet.has("Space") ? blacks[num - 1] : whites[num - 1];
+      item.classList.toggle("active")
+    }
+
+    // 音乐渐隐
+    const fadeSound = (audio) => {
+      if (audio.currentTime >= audio.duration) return;
+      const volume = audio.volume - 0.1;
+      if (volume <= 0) return audio.volume = 0;;
+      audio.volume = volume;
+      setTimeout(fadeSound, 50, audio);
+    }
+
+    // 保存按下键的key
+    const keySet = new Set();
+    // 声音级别
+    let index = 5;
+    // 设置声音级别
+    const setIndex = (digit) => {
+      index = digit || 5;
+      for (let i = 0; i < indexs.length; i++)
+        index == i + 1 ? indexs[i].classList.add("active") : indexs[i].classList.remove("active");
+    }
+
+    // 设置空格键，空格键切换黑白键，切换时自动抬起按键
+    const setSpace = () => {
+      document.querySelector(".space").style.background = keySet.has("Space") ? "#000" : "#fff";
+      for (const key of [...keySet].filter(item => item.startsWith("Numpad"))) {
+        keySet.delete(key);
+        const num = key.replace("Numpad", "");
+        keySet.has("Space") ? keySet.delete("Space") : keySet.add("Space");
+        sound(num, "keyup");
+        keySet.has("Space") ? keySet.delete("Space") : keySet.add("Space");
+      }
+    }
+
+
+    // 处理键盘事件
+    const handleKeyEvent = ev => {
+      let numpad; // 键盘右边小键盘的数字
+      let digit; // 键盘头部一行键盘的数字
+      if (ev.code.startsWith("Numpad"))
+        numpad = ev.key;
+      else if (ev.code.startsWith("Digit"))
+        digit = ev.key;
+
+      if (ev.type == "keydown") {
+        if (keySet.has(ev.code)) return;
+        keySet.add(ev.code);
+        if (numpad) sound(numpad);
+        else if (digit) setIndex(digit);
+
+      } else if (ev.type == "keyup") {
+        if (!keySet.has(ev.code)) return;
+        keySet.delete(ev.code);
+        if (numpad) sound(numpad, "keyup");
+        else if (digit) {
+          const findDigit = [...keySet].reverse().find(item => item.startsWith("Digit"))?.replace("Digit", "");
+          setIndex(findDigit)
+        }
+      }
+
+      if (ev.code == "Space") setSpace();
+
+    }
+    window.addEventListener("keydown", handleKeyEvent);
+    window.addEventListener("keyup", handleKeyEvent);
+
+  </script>
+
+</body>
+
+</html>
