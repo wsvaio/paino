@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="zh_CN">
+<html lang="zh_CN" class="tip">
 
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>电子琴</title>
+  <title>🎹</title>
   <style>
     html {
       font-size: calc(100vw / 750);
@@ -15,6 +15,18 @@
     div {
       box-sizing: border-box;
       transition: all .1s;
+      user-select: none;
+    }
+
+    html:not(.tip) .white,
+    html:not(.tip) .black,
+    html:not(.tip) .index div,
+    html:not(.tip) .space .text {
+      color: transparent;
+    }
+
+    .tip .i-tip {
+      color: cornflowerblue;
     }
 
 
@@ -27,7 +39,16 @@
       background: #fff;
       z-index: 100;
       border: .5rem solid #ccc;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 8rem;
+      padding: 0 4rem;
+    }
 
+    .space.active {
+      background-color: #000;
+      color: white;
     }
 
 
@@ -54,13 +75,17 @@
 
     .white,
     .black {
-
       border-radius: 0 0 6rem 6rem;
-
       transform-origin: 0 0;
-
-
+      font-size: 14rem;
+      color: #666;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      line-height: 500%;
     }
+
+
 
     .white {
       width: 80rem;
@@ -79,7 +104,7 @@
     }
 
     .black:nth-of-type(3) {
-      height: 0;
+      visibility: hidden;
     }
 
     .white.active,
@@ -95,7 +120,7 @@
       left: 0;
       display: flex;
       justify-content: space-between;
-
+      align-items: flex-end;
 
     }
 
@@ -104,11 +129,18 @@
       border: .5rem solid #ccc;
       transform-origin: bottom;
       height: 5vh;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 6rem;
+
       /* margin: 0 0.5rem; */
     }
 
     .index>div.active {
-      transform: scaleY(61.8%);
+      height: 3vh;
     }
 
     .index>div:nth-of-type(1) {
@@ -146,68 +178,208 @@
     .index>div:nth-of-type(9) {
       background: #333;
     }
+
+    .loading {
+      background-color: rgba(255, 255, 255, 0.8);
+      position: fixed;
+      top: 0;
+      right: 0;
+      left: 0;
+      bottom: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-flow: column;
+      font-size: 8rem;
+      color: #666;
+      transition: opacity 1s .5s;
+    }
+
+    .loading.hide {
+      opacity: 0;
+    }
+
+    .loading.hided {
+      display: none;
+    }
+
+    .loading .i-loading {
+      color: cornflowerblue;
+      width: 64rem;
+      height: 64rem;
+      margin-bottom: 12rem;
+    }
   </style>
 </head>
 
 <body>
 
-  <div class="space"></div>
+  <div class="space">
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="i-tip"
+      onclick="handleTipClick(event)">
+      <path fill="currentColor"
+        d="m22 10l-.625-1.375L20 8l1.375-.625L22 6l.625 1.375L24 8l-1.375.625Zm-3-4l-.95-2.05L16 3l2.05-.95L19 0l.95 2.05L22 3l-2.05.95ZM9 22q-.825 0-1.412-.587Q7 20.825 7 20h4q0 .825-.587 1.413Q9.825 22 9 22Zm-4-3v-2h8v2Zm.25-3q-1.725-1.025-2.737-2.75Q1.5 11.525 1.5 9.5q0-3.125 2.188-5.312Q5.875 2 9 2q3.125 0 5.312 2.188Q16.5 6.375 16.5 9.5q0 2.025-1.012 3.75q-1.013 1.725-2.738 2.75Zm.6-2h6.3q1.125-.8 1.737-1.975q.613-1.175.613-2.525q0-2.3-1.6-3.9T9 4Q6.7 4 5.1 5.6T3.5 9.5q0 1.35.613 2.525Q4.725 13.2 5.85 14ZM9 14Z" />
+    </svg>
+    <div class="text">SPACE</div>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+      class="i-help" title="帮助" onclick="handleHelpClick(event)">
+      <path fill="currentColor"
+        d="M11 18h2v-2h-2v2m1-16A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8s8 3.59 8 8s-3.59 8-8 8m0-14a4 4 0 0 0-4 4h2a2 2 0 0 1 2-2a2 2 0 0 1 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5a4 4 0 0 0-4-4Z" />
+    </svg>
+  </div>
 
 
   <div class="keys">
 
-    <div class="white"></div>
-    <div class="white"></div>
-    <div class="white"></div>
-    <div class="white"></div>
-    <div class="white"></div>
-    <div class="white"></div>
-    <div class="white"></div>
+    <div class="white" onpointerdown="handleKeyEvent({ code: 'Numpad1', type: 'keydown' })"
+      onpointerup="handleKeyEvent({ code: 'Numpad1', type: 'keyup' })"
+      onpointerleave="handleKeyEvent({ code: 'Numpad1', type: 'keyup' })">1</div>
+
+    <div class="white" onpointerdown="handleKeyEvent({ code: 'Numpad2', type: 'keydown' })"
+      onpointerup="handleKeyEvent({ code: 'Numpad2', type: 'keyup' })"
+      onpointerleave="handleKeyEvent({ code: 'Numpad2', type: 'keyup' })">2</div>
+
+    <div class="white" onpointerdown="handleKeyEvent({ code: 'Numpad3', type: 'keydown' })"
+      onpointerup="handleKeyEvent({ code: 'Numpad3', type: 'keyup' })"
+      onpointerleave="handleKeyEvent({ code: 'Numpad3', type: 'keyup' })">3</div>
+
+    <div class="white" onpointerdown="handleKeyEvent({ code: 'Numpad4', type: 'keydown' })"
+      onpointerup="handleKeyEvent({ code: 'Numpad4', type: 'keyup' })"
+      onpointerleave="handleKeyEvent({ code: 'Numpad4', type: 'keyup' })">4</div>
+
+    <div class="white" onpointerdown="handleKeyEvent({ code: 'Numpad5', type: 'keydown' })"
+      onpointerup="handleKeyEvent({ code: 'Numpad5', type: 'keyup' })"
+      onpointerleave="handleKeyEvent({ code: 'Numpad5', type: 'keyup' })">5</div>
+
+    <div class="white" onpointerdown="handleKeyEvent({ code: 'Numpad6', type: 'keydown' })"
+      onpointerup="handleKeyEvent({ code: 'Numpad6', type: 'keyup' })"
+      onpointerleave="handleKeyEvent({ code: 'Numpad6', type: 'keyup' })">6</div>
+
+    <div class="white" onpointerdown="handleKeyEvent({ code: 'Numpad7', type: 'keydown' })"
+      onpointerup="handleKeyEvent({ code: 'Numpad7', type: 'keyup' })"
+      onpointerleave="handleKeyEvent({ code: 'Numpad7', type: 'keyup' })">7</div>
+
 
     <div class="black-keys">
+      <div class="black" onpointerdown="handleKeyEvent({ code: 'Black1', type: 'keydown' })"
+        onpointerup="handleKeyEvent({ code: 'Black1', type: 'keyup' })"
+        onpointerleave="handleKeyEvent({ code: 'Black1', type: 'keyup' })">#1</div>
+      <div class="black" onpointerdown="handleKeyEvent({ code: 'Black2', type: 'keydown' })"
+        onpointerup="handleKeyEvent({ code: 'Black2', type: 'keyup' })"
+        onpointerleave="handleKeyEvent({ code: 'Black2', type: 'keyup' })">#2</div>
       <div class="black"></div>
-      <div class="black"></div>
-      <div class="black"></div>
-      <div class="black"></div>
-      <div class="black"></div>
-      <div class="black"></div>
+      <div class="black" onpointerdown="handleKeyEvent({ code: 'Black4', type: 'keydown' })"
+        onpointerup="handleKeyEvent({ code: 'Black4', type: 'keyup' })"
+        onpointerleave="handleKeyEvent({ code: 'Black4', type: 'keyup' })">#4</div>
+      <div class="black" onpointerdown="handleKeyEvent({ code: 'Black5', type: 'keydown' })"
+        onpointerup="handleKeyEvent({ code: 'Black5', type: 'keyup' })"
+        onpointerleave="handleKeyEvent({ code: 'Black5', type: 'keyup' })">#5</div>
+      <div class="black" onpointerdown="handleKeyEvent({ code: 'Black6', type: 'keydown' })"
+        onpointerup="handleKeyEvent({ code: 'Black6', type: 'keyup' })"
+        onpointerleave="handleKeyEvent({ code: 'Black6', type: 'keyup' })">#6</div>
     </div>
   </div>
 
   <div class="index">
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div class="active"></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
+    <div onpointerdown="handleKeyEvent({ code: 'Digit1', type: 'keydown' })"
+      onpointerup="handleKeyEvent({ code: 'Digit1', type: 'keyup' })"
+      onpointerleave="handleKeyEvent({ code: 'Digit1', type: 'keyup' })">1</div>
+    <div onpointerdown="handleKeyEvent({ code: 'Digit2', type: 'keydown' })"
+      onpointerup="handleKeyEvent({ code: 'Digit2', type: 'keyup' })"
+      onpointerleave="handleKeyEvent({ code: 'Digit2', type: 'keyup' })">2</div>
+    <div onpointerdown="handleKeyEvent({ code: 'Digit3', type: 'keydown' })"
+      onpointerup="handleKeyEvent({ code: 'Digit3', type: 'keyup' })"
+      onpointerleave="handleKeyEvent({ code: 'Digit3', type: 'keyup' })">3</div>
+    <div onpointerdown="handleKeyEvent({ code: 'Digit4', type: 'keydown' })"
+      onpointerup="handleKeyEvent({ code: 'Digit4', type: 'keyup' })"
+      onpointerleave="handleKeyEvent({ code: 'Digit4', type: 'keyup' })">4</div>
+    <div class="active" onpointerdown="handleKeyEvent({ code: 'Digit5', type: 'keydown' })"
+      onpointerup="handleKeyEvent({ code: 'Digit5', type: 'keyup' })"
+      onpointerleave="handleKeyEvent({ code: 'Digit5', type: 'keyup' })">5</div>
+    <div onpointerdown="handleKeyEvent({ code: 'Digit6', type: 'keydown' })"
+      onpointerup="handleKeyEvent({ code: 'Digit6', type: 'keyup' })"
+      onpointerleave="handleKeyEvent({ code: 'Digit6', type: 'keyup' })">6</div>
+    <div onpointerdown="handleKeyEvent({ code: 'Digit7', type: 'keydown' })"
+      onpointerup="handleKeyEvent({ code: 'Digit7', type: 'keyup' })"
+      onpointerleave="handleKeyEvent({ code: 'Digit7', type: 'keyup' })">7</div>
+    <div onpointerdown="handleKeyEvent({ code: 'Digit8', type: 'keydown' })"
+      onpointerup="handleKeyEvent({ code: 'Digit8', type: 'keyup' })"
+      onpointerleave="handleKeyEvent({ code: 'Digit8', type: 'keyup' })">8</div>
+    <div onpointerdown="handleKeyEvent({ code: 'Digit9', type: 'keydown' })"
+      onpointerup="handleKeyEvent({ code: 'Digit9', type: 'keyup' })"
+      onpointerleave="handleKeyEvent({ code: 'Digit9', type: 'keyup' })">9</div>
   </div>
 
+  <div class="loading">
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+      class="i-loading">
+      <circle cx="12" cy="2" r="0" fill="currentColor">
+        <animate attributeName="r" begin="0" calcMode="spline" dur="1s"
+          keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite"
+          values="0;2;0;0" />
+      </circle>
+      <circle cx="12" cy="2" r="0" fill="currentColor" transform="rotate(45 12 12)">
+        <animate attributeName="r" begin="0.125s" calcMode="spline" dur="1s"
+          keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite"
+          values="0;2;0;0" />
+      </circle>
+      <circle cx="12" cy="2" r="0" fill="currentColor" transform="rotate(90 12 12)">
+        <animate attributeName="r" begin="0.25s" calcMode="spline" dur="1s"
+          keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite"
+          values="0;2;0;0" />
+      </circle>
+      <circle cx="12" cy="2" r="0" fill="currentColor" transform="rotate(135 12 12)">
+        <animate attributeName="r" begin="0.375s" calcMode="spline" dur="1s"
+          keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite"
+          values="0;2;0;0" />
+      </circle>
+      <circle cx="12" cy="2" r="0" fill="currentColor" transform="rotate(180 12 12)">
+        <animate attributeName="r" begin="0.5s" calcMode="spline" dur="1s"
+          keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite"
+          values="0;2;0;0" />
+      </circle>
+      <circle cx="12" cy="2" r="0" fill="currentColor" transform="rotate(225 12 12)">
+        <animate attributeName="r" begin="0.625s" calcMode="spline" dur="1s"
+          keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite"
+          values="0;2;0;0" />
+      </circle>
+      <circle cx="12" cy="2" r="0" fill="currentColor" transform="rotate(270 12 12)">
+        <animate attributeName="r" begin="0.75s" calcMode="spline" dur="1s"
+          keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite"
+          values="0;2;0;0" />
+      </circle>
+      <circle cx="12" cy="2" r="0" fill="currentColor" transform="rotate(315 12 12)">
+        <animate attributeName="r" begin="0.875s" calcMode="spline" dur="1s"
+          keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite"
+          values="0;2;0;0" />
+      </circle>
+    </svg>
+    <div class="text">资源加载中……</div>
+  </div>
 
   <script>
+    const handleTipClick = ev => {
+      document.documentElement.classList.toggle("tip");
+    }
+    const handleHelpClick = ev => {
+      location.href = "./help.html"
+    }
+  </script>
 
+  <script>
     const blacks = document.querySelectorAll(".black");
     const whites = document.querySelectorAll(".white");
     const indexs = document.querySelector(".index").children;
 
-
+    // 保存按下键的key
+    const keySet = new Set();
+    // 声音级别
+    let index = 5;
+    // 音频
     const audioMap = new Map();
-    audioMap.set("A1", new Audio("./sound/A/A0.MP3"));
-    audioMap.set("#A1", new Audio("./sound/%23A/%23A0.MP3"));
-    audioMap.set("B1", new Audio("./sound/B/B0.MP3"));
-    audioMap.set("C9", new Audio("./sound/C/C8.MP3"));
-    for (const key of ["A", "B", "C", "D", "E", "F", "G"]) {
-      for (const i of [1, 2, 3, 4, 5, 6, 7]) {
-        audioMap.set(`${key}${i + 1}`, new Audio(`./sound/${key}/${key}${i}.MP3`));
-        if (["A", "C", "D", "F", "G"].includes(key)) {
-          // %23 = #
-          audioMap.set(`#${key}${i + 1}`, new Audio(`./sound/%23${key}/%23${key}${i}.MP3`));
-        }
-      }
-    }
+    // 音频文件加载数
+    let count = 0;
 
     // 键盘按下时奏乐，键盘键起时音乐渐隐
     const sound = (num, type = "keydown") => {
@@ -225,7 +397,6 @@
       const item = keySet.has("Space") ? blacks[num - 1] : whites[num - 1];
       item.classList.toggle("active")
     }
-
     // 音乐渐隐
     const fadeSound = (audio) => {
       if (audio.currentTime >= audio.duration) return;
@@ -234,21 +405,15 @@
       audio.volume = volume;
       setTimeout(fadeSound, 50, audio);
     }
-
-    // 保存按下键的key
-    const keySet = new Set();
-    // 声音级别
-    let index = 5;
     // 设置声音级别
     const setIndex = (digit) => {
       index = digit || 5;
       for (let i = 0; i < indexs.length; i++)
         index == i + 1 ? indexs[i].classList.add("active") : indexs[i].classList.remove("active");
     }
-
     // 设置空格键，空格键切换黑白键，切换时自动抬起按键
     const setSpace = () => {
-      document.querySelector(".space").style.background = keySet.has("Space") ? "#000" : "#fff";
+      document.querySelector(".space").classList.toggle("active");
       for (const key of [...keySet].filter(item => item.startsWith("Numpad"))) {
         keySet.delete(key);
         const num = key.replace("Numpad", "");
@@ -258,37 +423,88 @@
       }
     }
 
-
     // 处理键盘事件
     const handleKeyEvent = ev => {
       let numpad; // 键盘右边小键盘的数字
       let digit; // 键盘头部一行键盘的数字
+      let black;
       if (ev.code.startsWith("Numpad"))
-        numpad = ev.key;
+        numpad = ev.code.replace("Numpad", "");
       else if (ev.code.startsWith("Digit"))
-        digit = ev.key;
+        digit = ev.code.replace("Digit", "");
+      else if (ev.code.startsWith("Black"))
+        black = ev.code.replace("Black", "");
 
       if (ev.type == "keydown") {
         if (keySet.has(ev.code)) return;
         keySet.add(ev.code);
         if (numpad) sound(numpad);
-        else if (digit) setIndex(digit);
+        else if (digit && digit >= 1 && digit <= 9) setIndex(digit);
+        else if (black) {
+          keySet.add("Space");
+          sound(black);
+          keySet.delete("Space");
+        }
 
       } else if (ev.type == "keyup") {
         if (!keySet.has(ev.code)) return;
         keySet.delete(ev.code);
         if (numpad) sound(numpad, "keyup");
-        else if (digit) {
-          const findDigit = [...keySet].reverse().find(item => item.startsWith("Digit"))?.replace("Digit", "");
-          setIndex(findDigit)
+        else if (black) {
+          keySet.add("Space");
+          sound(black, "keyup");
+          keySet.delete("Space");
+        }
+        // 自动回弹
+        // else if (digit) {
+        //   const findDigit = [...keySet].reverse().find(item => item.startsWith("Digit"))?.replace("Digit", "");
+        //   setIndex(findDigit)
+        // }
+      }
+      if (ev.code == "Space") setSpace();
+    }
+
+
+    const init = () => {
+      const loading = document.querySelector(".loading");
+      loading.classList.add("hide");
+      setTimeout(() => loading.classList.add("hided"), 1500);
+      window.addEventListener("keydown", handleKeyEvent);
+      window.addEventListener("keyup", handleKeyEvent);
+    }
+
+    const loadAudio = () => {
+      const createAudio = (url) => {
+        const audio = new Audio(url);
+        if (count < 88) {
+          audio.oncanplaythrough = ev => {
+            if (++count >= 88) {
+              init();
+            }
+            document.querySelector(".loading .text").textContent = count >= 88 ? `加载完成` : `正在加载音频文件 ${count} / 88`
+          }
+        }
+        return audio;
+      }
+      audioMap.set("A1", createAudio("./sound/A/A0.mp3"));
+      audioMap.set("#A1", createAudio("./sound/%23A/%23A0.mp3"));
+      audioMap.set("B1", createAudio("./sound/B/B0.mp3"));
+      audioMap.set("C9", createAudio("./sound/C/C8.mp3"));
+      for (const key of ["A", "B", "C", "D", "E", "F", "G"]) {
+        for (const i of [1, 2, 3, 4, 5, 6, 7]) {
+          audioMap.set(`${key}${i + 1}`, createAudio(`./sound/${key}/${key}${i}.mp3`));
+          if (["A", "C", "D", "F", "G"].includes(key)) {
+            // %23 = #
+            audioMap.set(`#${key}${i + 1}`, createAudio(`./sound/%23${key}/%23${key}${i}.mp3`));
+          }
         }
       }
-
-      if (ev.code == "Space") setSpace();
-
     }
-    window.addEventListener("keydown", handleKeyEvent);
-    window.addEventListener("keyup", handleKeyEvent);
+
+    window.addEventListener("load", () => {
+      loadAudio();
+    });
+
 
   </script>
 
