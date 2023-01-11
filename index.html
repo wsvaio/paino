@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎹</title>
+  <title>电子琴</title>
   <style>
     html {
 
@@ -53,7 +53,9 @@
       background-color: #000;
       color: white;
     }
-    .space .i-help, .space .i-tip {
+
+    .space .i-help,
+    .space .i-tip {
       width: .24rem;
       height: .24rem;
     }
@@ -410,8 +412,14 @@
       audio.volume = volume;
       setTimeout(fadeSound, 50, audio);
     }
-    // 设置声音级别
+    // 设置声音级别，切换时自动抬起按键
     const setIndex = (digit) => {
+      if (index == digit) return;
+      for (const key of [...keySet].filter(item => item.startsWith("Numpad"))) {
+        keySet.delete(key);
+        const num = key.replace("Numpad", "");
+        sound(num, "keyup");
+      }
       index = digit || 5;
       for (let i = 0; i < indexs.length; i++)
         index == i + 1 ? indexs[i].classList.add("active") : indexs[i].classList.remove("active");
@@ -432,7 +440,7 @@
     const handleKeyEvent = ev => {
       let numpad; // 键盘右边小键盘的数字
       let digit; // 键盘头部一行键盘的数字
-      let black;
+      let black; // 鼠标点击黑键的数字
       if (ev.code.startsWith("Numpad"))
         numpad = ev.code.replace("Numpad", "");
       else if (ev.code.startsWith("Digit"))
@@ -470,6 +478,7 @@
     }
 
 
+    // 初始化，移除加载动画，绑定键盘事件
     const init = () => {
       const loading = document.querySelector(".loading");
       loading.classList.add("hide");
@@ -478,14 +487,13 @@
       window.addEventListener("keyup", handleKeyEvent);
     }
 
+    // 加载音频文件
     const loadAudio = () => {
       const createAudio = (url) => {
         const audio = new Audio(url);
         if (count < 88) {
           audio.oncanplaythrough = ev => {
-            if (++count >= 88) {
-              init();
-            }
+            if (++count >= 88) init();
             document.querySelector(".loading .text").textContent = count >= 88 ? `加载完成` : `正在加载音频文件 ${count} / 88`
           }
         }
@@ -499,17 +507,13 @@
         for (const i of [1, 2, 3, 4, 5, 6, 7]) {
           audioMap.set(`${key}${i + 1}`, createAudio(`./sound/${key}/${key}${i}.mp3`));
           if (["A", "C", "D", "F", "G"].includes(key)) {
-            // %23 = #
-            audioMap.set(`#${key}${i + 1}`, createAudio(`./sound/%23${key}/%23${key}${i}.mp3`));
+            audioMap.set(`#${key}${i + 1}`, createAudio(`./sound/%23${key}/%23${key}${i}.mp3`)); // %23 = #
           }
         }
       }
     }
 
-    window.addEventListener("load", () => {
-      loadAudio();
-    });
-
+    window.addEventListener("load", loadAudio);
 
   </script>
 
