@@ -466,6 +466,10 @@
         });
         audio.addEventListener("abort", reject);
         audio.addEventListener("error", reject);
+
+        audio.preload = "auto";
+        // ios下不会自动加载，需要手动调用
+        audio.load();
       });
       audioMap.set("A1", await createAudio("./sound/A/A0.mp3"));
       audioMap.set("#A1", await createAudio("./sound/%23A/%23A0.mp3"));
