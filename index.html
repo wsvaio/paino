@@ -333,8 +333,7 @@
     let index = 5;
     // 音频
     const audioMap = new Map();
-    // 音频文件加载数
-    let count = 0;
+
 
     // 键盘按下时奏乐，键盘键起时音乐渐隐
     const sound = (num, type = "keydown") => {
@@ -454,33 +453,38 @@
       window.addEventListener("keyup", handleKeyEvent);
     }
 
+
     // 加载音频文件
-    const loadAudio = () => {
-      const createAudio = (url) => {
+    const loadAudio = async () => {
+
+      let count = 0;
+      const createAudio = (url) => new Promise((resolve, reject) => {
         const audio = new Audio(url);
-        if (count < 88) {
-          audio.oncanplaythrough = ev => {
-            if (++count >= 88) init();
-            document.querySelector(".loading .text").textContent = count >= 88 ? `加载完成` : `正在加载音频文件 ${count} / 88`
-          }
-        }
-        return audio;
-      }
-      audioMap.set("A1", createAudio("./sound/A/A0.mp3"));
-      audioMap.set("#A1", createAudio("./sound/%23A/%23A0.mp3"));
-      audioMap.set("B1", createAudio("./sound/B/B0.mp3"));
-      audioMap.set("C9", createAudio("./sound/C/C8.mp3"));
+        audio.addEventListener("canplaythrough", () => {
+          document.querySelector(".loading .text").textContent = ++count >= 88 ? `加载完成` : `正在加载音频文件 ${count} / 88`
+          resolve(audio);
+        });
+        audio.addEventListener("abort", reject);
+        audio.addEventListener("error", reject);
+      });
+      audioMap.set("A1", await createAudio("./sound/A/A0.mp3"));
+      audioMap.set("#A1", await createAudio("./sound/%23A/%23A0.mp3"));
+      audioMap.set("B1", await createAudio("./sound/B/B0.mp3"));
+      audioMap.set("C9", await createAudio("./sound/C/C8.mp3"));
       for (const key of ["A", "B", "C", "D", "E", "F", "G"]) {
         for (const i of [1, 2, 3, 4, 5, 6, 7]) {
-          audioMap.set(`${key}${i + 1}`, createAudio(`./sound/${key}/${key}${i}.mp3`));
+          audioMap.set(`${key}${i + 1}`, await createAudio(`./sound/${key}/${key}${i}.mp3`));
           if (["A", "C", "D", "F", "G"].includes(key)) {
-            audioMap.set(`#${key}${i + 1}`, createAudio(`./sound/%23${key}/%23${key}${i}.mp3`)); // %23 = #
+            audioMap.set(`#${key}${i + 1}`, await createAudio(`./sound/%23${key}/%23${key}${i}.mp3`)); // %23 = #
           }
         }
       }
     }
 
-    window.addEventListener("load", loadAudio);
+    window.addEventListener("load", async () => {
+      await loadAudio();
+      init();
+    });
 
   </script>
 
